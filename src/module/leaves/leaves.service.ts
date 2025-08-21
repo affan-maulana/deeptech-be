@@ -20,7 +20,7 @@ export class LeavesService {
       const employee = await this.employeeRepository.findOne({
         where: { id: createLeaveDto.employeeId },
       });
-      if (!employee) throw new Error('Employee not found');
+      if (!employee) throw new NotFoundException('Employee not found');
 
       // a. Maksimal 12 hari cuti per tahun
       if (employee.remainingLeaves < 1) {
@@ -91,7 +91,7 @@ export class LeavesService {
     }
 
     const employee = leave.employee;
-    if (!employee) throw new Error('Employee not found');
+    if (!employee) throw new NotFoundException('Employee not found');
 
     // Validasi startDate dan endDate harus sama (1 hari)
     if (updateLeaveDto.startDate !== updateLeaveDto.endDate) {
@@ -145,7 +145,7 @@ export class LeavesService {
         message: `Leave with ID ${id} successfully removed`,
       };
     } catch (error) {
-      throw new Error(`Error: ${error.message}`);
+        throw error;
     }
   }
 }

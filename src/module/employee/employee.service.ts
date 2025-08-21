@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { Employee } from './entities/employee.entity';
@@ -13,9 +13,16 @@ export class EmployeeService {
   ) {}
   async create(createEmployeeDto: CreateEmployeeDto) {
     try {
+      // check duplicate email
+      const existingEmployee = await this.employeeRepository.findOne({
+        where: { email: createEmployeeDto.email },
+      });
+      if (existingEmployee) {
+        throw new ConflictException('Email already exists');
+      }
       return await this.employeeRepository.save(createEmployeeDto);
     } catch (error) {
-      throw new Error(`Error: ${error.message}`);
+      throw error;
     }
   }
 
@@ -23,7 +30,7 @@ export class EmployeeService {
     try {
       return await this.employeeRepository.find();
     } catch (error) {
-      throw new Error(`Error: ${error.message}`);
+      throw error;
     }
   }
 
@@ -35,7 +42,7 @@ export class EmployeeService {
         value: employee.id,
       }));
     } catch (error) {
-      throw new Error(`Error: ${error.message}`);
+      throw error;
     }
   }
 
@@ -43,7 +50,7 @@ export class EmployeeService {
     try {
       return await this.employeeRepository.findOne({ where: { id } });
     } catch (error) {
-      throw new Error(`Error: ${error.message}`);
+      throw error;
     }
   }
 
@@ -52,7 +59,7 @@ export class EmployeeService {
       await this.employeeRepository.update(id, updateEmployeeDto);
       return await this.employeeRepository.findOne({ where: { id } });
     } catch (error) {
-      throw new Error(`Error: ${error.message}`);
+      throw error;
     }
   }
 
@@ -72,7 +79,7 @@ export class EmployeeService {
         message: `Employee with ID ${id} successfully removed`,
       };
     } catch (error) {
-      throw new Error(`Error: ${error.message}`);
+      throw error;
     }
   }
 }

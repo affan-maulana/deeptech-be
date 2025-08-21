@@ -31,7 +31,10 @@ export class AuthController {
       sameSite: 'strict',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 hari
     });
-    return { message: 'Login successful' };
+    return { 
+      data: result?.user,
+      message: 'Login successful'
+     };
   }
 
   @Post('register')

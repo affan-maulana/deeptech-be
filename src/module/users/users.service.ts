@@ -63,12 +63,12 @@ export class UsersService {
   async update(id: string, updateUserDto: UpdateUserDto) {
     try {
       const existingEmail = await this.userRepository.findOne({
-        select: ['email'],
+        select: ['email','id'],
         where: {
           email: updateUserDto.email,
         },
       });
-      if (existingEmail) {
+      if (existingEmail && existingEmail.id !== id) {
         throw new ConflictException('Email already exists');
       }
       let hashedPassword: string | undefined = undefined;
@@ -81,7 +81,7 @@ export class UsersService {
       });
       return await this.userRepository.findOne({ where: { id } });
     } catch (error) {
-      throw new InternalServerErrorException('Error updating user');
+      throw new InternalServerErrorException(error);
     }
   }
 

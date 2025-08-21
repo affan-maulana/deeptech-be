@@ -27,6 +27,18 @@ export class EmployeeService {
     }
   }
 
+  async dropdown() {
+    try {
+      const employees = await this.employeeRepository.find();
+      return employees.map(employee => ({
+        label: employee.firstName + ' ' + employee.lastName,
+        value: employee.id,
+      }));
+    } catch (error) {
+      throw new Error(`Error: ${error.message}`);
+    }
+  }
+
   async findOne(id: string) {
     try {
       return await this.employeeRepository.findOne({ where: { id } });
@@ -38,6 +50,7 @@ export class EmployeeService {
   async update(id: string, updateEmployeeDto: UpdateEmployeeDto) {
     try {
       await this.employeeRepository.update(id, updateEmployeeDto);
+      return await this.employeeRepository.findOne({ where: { id } });
     } catch (error) {
       throw new Error(`Error: ${error.message}`);
     }

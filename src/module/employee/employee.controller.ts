@@ -26,6 +26,12 @@ export class EmployeeController {
     return new ResponseDefaultDto(resp);
   }
 
+  @Get('dropdown')
+  async dropdown() {
+    const resp = await this.employeeService.dropdown();
+    return new ResponseDefaultDto(resp);
+  }
+
   @Get(':id')
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
     const resp = await this.employeeService.findOne(id);
@@ -34,9 +40,9 @@ export class EmployeeController {
 
   @Patch(':id')
   async update(@Param('id', ParseUUIDPipe) id: string, @Body() updateEmployeeDto: UpdateEmployeeDto) {
-    await this.employeeService.update(id, updateEmployeeDto);
+    const resp = await this.employeeService.update(id, updateEmployeeDto);
     return new ResponseDefaultDto({
-      data: null,
+      data: resp,
       message: `Employee with ID ${id} successfully updated`,
     });
   }
